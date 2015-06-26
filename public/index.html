@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" language="javascript"
+	src="/javascript/jquery.js"></script>
+<script type="text/javascript" language="javascript"
+	src="/javascript/jquery-ui.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700'
+	rel='stylesheet' type='text/css'>
+<link id="theme" rel="stylesheet" href="/css/default.css">
+
+
+<script language="JavaScript" type="text/javascript">
+	var presets = [
+			[ "", "", "", "", "" ],
+			[ "postgres-heroku", "postgresql",
+					"ec2-54-83-205-164.compute-1.amazonaws.com", "5432",
+					"d9v6d5uqacptit", "kyuljdoqfyziks",
+					"x9LvzxTGy8izs-7NFY30VDhqT0" ],
+			[ "mysql-heroku", "mysql", "us-cdbr-iron-east-02.cleardb.net",
+					"3306", "heroku_126abff0eac31c8", "bf05d3bb2265c3",
+					"fc67f770" ],
+			[ "mysql-heroku-information_schema", "mysql",
+					"us-cdbr-iron-east-02.cleardb.net", "3306",
+					"information_schema", "bf05d3bb2265c3", "fc67f770" ],
+			[ "mysql-localhost", "mysql", "localhost", "3306",
+					"information_schema", "root", "root001" ],
+			[ "postgres-template", "postgresql", "localhost", "5432", "world",
+					"dmc", "dmc001" ],
+			[ "mysql-template", "mysql", "localhost", "3306", "database",
+					"user", "password" ],
+			[ "oracle-template", "oracle", "localhost", "1521", "database",
+					"user", "password" ] ];
+
+	var csspresets = [ "default.css", "black.css", "orange.css", "dark.css" ];
+
+	jQuery(function($) {
+
+		setAppearance("login");
+
+		for (var i = 0; i < presets.length; i++) {
+			$("#preset").append($('<option>').html(presets[i][0]).val(i));
+		}
+
+		for (var i = 0; i < csspresets.length; i++) {
+			var $option = $('<option>').html(csspresets[i]).val(csspresets[i])
+					.attr('id', csspresets[i]);
+			$("#css-list").append(
+					$('<option>').html(csspresets[i]).val(csspresets[i]));
+		}
+
+		$('#preset').on("change", function() {
+			var value = $(this).val();
+			$("#vendor").val(presets[value][1]);
+			$("#host").val(presets[value][2]);
+			$("#port").val(presets[value][3]);
+			$("#database").val(presets[value][4]);
+			$("#user").val(presets[value][5]);
+			$("#password").val(presets[value][6]);
+		});
+
+		$('#login').click(
+				function() {
+
+					$("input[type='button']").prop("disabled", true);
+
+					$.ajax({
+						url : "/query",
+						type : "post",
+						dataType : "json",
+						data : {
+							event : 'login',
+							vendor : $('#vendor').val(),
+							host : $('#host').val(),
+							port : $('#port').val(),
+							database : $('#database').val(),
+							user : $('#user').val(),
+							password : $('#password').val()
+						}
+					}).done(
+							function(data) {
+								setAppearance("sql");
+								showMessage($("#login-message-table"),
+										"login-database is "
+												+ $('#vendor').val() + "://"
+												+ $('#host').val() + "/"
+												+ $('#database').val());
+							}).fail(
+							function(XMLHttpRequest, textStatus, errorThrown) {
+								showErrorMessage($("#login-message-table"),
+										errorThrown);
+							}).always(function() {
+						$("input[type='button']").prop("disabled", false);
+					});
+				});
+
+		$('#execute').click(
+				function() {
+
+					$("input[type='button']").prop("disabled", true);
+
+					$.ajax({
+						url : "/query",
+						type : "post",
+						dataType : "json",
+						data : {
+							event : 'execute',
+							vendor : $('#vendor').val(),
+							host : $('#host').val(),
+							port : $('#port').val(),
+							database : $('#database').val(),
+							user : $('#user').val(),
+							password : $('#password').val(),
+							query : $('#sql').val()
+						}
+					}).done(
+							function(data) {
+
+								try {
+									var obj = $.parseJSON(data);
+									showMessage($("#result-set"), obj.affected
+											+ " data has updated.");
+								} catch (e) {
+									showResultSet($("#result-set"), data);
+								}
+							})
+							.fail(
+									function(XMLHttpRequest, textStatus,
+											errorThrown) {
+										showErrorMessage($('#result-set'),
+												errorThrown);
+									}).always(
+									function() {
+										$("input[type='button']").prop(
+												"disabled", false);
+									});
+				});
+
+		$('#exit').click(function() {
+			setAppearance("login");
+		});
+
+	});
+
+	function showResultSet(target, data) {
+
+		target.html("");
+		var $head = null, $body = $('<tbody>');
+
+		$.each(data, function(index, obj) {
+			if ($head === null) {
+				$head = $('<tr>').append($.map(obj, function(value, name) {
+					return $('<th>', {
+						text : name
+					});
+				}));
+			}
+
+			$('<tr>').append($.map(obj, function(value, name) {
+				return $('<td>', {
+					text : value
+				});
+			})).appendTo($body);
+		});
+		target.attr("border", "1");
+		target.append($head).append($body);
+
+	}
+
+	function showMessage(target, message) {
+		target.html("");
+		$body = $('<tbody>').append($('<tr>'));
+		$body.append($('<td>', {
+			text : message
+		}));
+		target.attr("border", "0");
+		target.append($body);
+	}
+
+	function showErrorMessage(target, errorThrown) {
+		target.html("");
+		$body = $('<tbody>').append($('<tr>'));
+		$body.append($('<td>', {
+			id : 'error',
+			text : errorThrown
+		}));
+		target.attr("border", "0");
+		target.append($body);
+	}
+
+	function setAppearance(mode) {
+
+		if (mode === "login") {
+			$("#login-parameter").show();
+			$("#login-message-table").html("");
+			$("#query-buttons").hide();
+			$("#sql").val("");
+			$("#query-box").hide();
+			$("#result-set").html("");
+			if ($('#dialog').dialog("instance")) {
+				$("#dialog").html("");
+				$('#dialog').dialog("destroy");
+			}
+		} else if (mode == "sql") {
+			$("#login-parameter").hide();
+			$("#query-buttons").show();
+			$("#sql").val("");
+			$("#query-box").show();
+			$("#result-set").html("");
+			if ($('#dialog').dialog("instance")) {
+				$("#dialog").html("");
+				$('#dialog').dialog("destroy");
+			}
+		}
+
+	}
+
+	function changeTheme() {
+		$('#theme').attr("href", $("#css-list").val());
+	};
+	
+	function changeTheme() {
+		$('#theme').attr("href","/css/" + $("#css-list").val());
+	};
+</script>
+
+<title>node-view</title>
+</head>
+
+<body>
+
+	<div id="header">
+		<table cellpadding="" class="header">
+			<tr>
+				<td align="left">
+					<h1>db-view</h1>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">buid on 16th June 2015. <br>developed by
+					dmc system service.
+				</td>
+			</tr>
+		</table>
+		<hr />
+	</div>
+
+	<div id="css-selector">
+		<table>
+			<tr>
+				<td>theme</td>
+				<td><select id="css-list" onchange="changeTheme()">
+				</select></td>
+			</tr>
+		</table>
+		<hr />
+	</div>
+	<div id="login-parameter">
+		<table>
+			<tr>
+				<td>database</td>
+				<td><select id="preset">
+				</select></td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<td>vender</td>
+				<td><input id="vendor" name="vendor" type="text" size="40pix"
+					value="" /></td>
+			</tr>
+			<tr>
+				<td>host</td>
+				<td><input id="host" name="host" type="text" size="40pix"
+					value="" /></td>
+			</tr>
+			<tr>
+				<td>port</td>
+				<td><input id="port" name="port" type="text" size="40pix"
+					value="" /></td>
+			</tr>
+			<tr>
+				<td>database</td>
+				<td><input id="database" name="database" type="text"
+					size="40pix" value="" /></td>
+			</tr>
+			<tr>
+				<td>user</td>
+				<td><input id="user" name="user" type="text" size="40pix"
+					value="" /></td>
+			</tr>
+			<tr>
+				<td>password</td>
+				<td><input id="password" name="password" type="text"
+					size="40pix" value="" /></td>
+			</tr>
+		</table>
+		<input class="button" type="button" value="login" id="login" />
+		<hr />
+	</div>
+
+	<div id="login-message">
+		<table id='login-message-table'>
+		</table>
+	</div>
+
+	<div id="query-box">
+		<table>
+			<tr>
+				<td><textarea rows="6" cols="60" name="sql" id="sql" value="">
+          </textarea></td>
+			</tr>
+		</table>
+	</div>
+
+	<div id="query-buttons">
+		<table>
+			<tr>
+				<td><input type="button" value="execute" id="execute" /></td>
+				<td><input type="button" value="exit" id="exit" /></td>
+			</tr>
+		</table>
+		<hr />
+	</div>
+
+	<div id="result">
+		<table id='result-set' border='1' cellpadding='1' cellspacing='0'>
+		</table>
+	</div>
+
+	<div id="dialog" title="history"></div>
+
+
+</body>
+
+</html>

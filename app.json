@@ -1,0 +1,6 @@
+{
+  "name": "node-view",
+  "description": "database util app using Node.js on middles named Express",
+  "repository": "https://github.com/heroku/node view",
+  "keywords": ["node", "express", "static"]
+}

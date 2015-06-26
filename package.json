@@ -1,0 +1,28 @@
+{
+  "name": "node-view",
+  "version": "0.1.3",
+  "description": "database util app using Node.js on middles named Express",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+	"express": "3.2.6",
+    "ejs": "*",
+    "pg": "*",
+    "mysql": "*"
+  },
+  "engines": {
+    "node": "0.12.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heroku/node-view"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT"
+}
