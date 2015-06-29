@@ -217,7 +217,7 @@
 	function changeTheme() {
 		$('#theme').attr("href", $("#css-list").val());
 	};
-	
+
 	function changeTheme() {
 		$('#theme').attr("href","/css/" + $("#css-list").val());
 	};
@@ -227,6 +227,17 @@
 </head>
 
 <body>
+
+	<div id="css-selector">
+		<table>
+			<tr>
+				<td>theme</td>
+				<td><select id="css-list" onchange="changeTheme()">
+				</select></td>
+			</tr>
+		</table>
+		<hr />
+	</div>
 
 	<div id="header">
 		<table cellpadding="" class="header">
@@ -244,16 +255,6 @@
 		<hr />
 	</div>
 
-	<div id="css-selector">
-		<table>
-			<tr>
-				<td>theme</td>
-				<td><select id="css-list" onchange="changeTheme()">
-				</select></td>
-			</tr>
-		</table>
-		<hr />
-	</div>
 	<div id="login-parameter">
 		<table>
 			<tr>
