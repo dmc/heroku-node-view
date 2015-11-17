@@ -3,9 +3,8 @@
    src: url('./font/Montserrat-Bold.ttf') format("truetype");
 }
 
-
 body{
-	font-family:"Montserrat",Arial;font-weight:700;
+	font-family:"Montserrat",sans-serif;font-weight:700;
 	color:black;
 }
 
