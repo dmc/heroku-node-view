@@ -1,6 +1,9 @@
 {
-  "name": "node-view",
-  "description": "database util app using Node.js on middles named Express",
-  "repository": "https://github.com/heroku/node view",
-  "keywords": ["node", "express", "static"]
+  "name": "Database viewer",
+  "description": "Database viewer app using Node.js with Express 4",
+  "repository": "https://github.com/dmc/heroku-node-view",
+  "logo": "https://github.com/dmc/heroku-node-view/blob/master/public/node.svg",
+  "keywords": ["node", "express", "heroku"],
+  "image": "heroku/nodejs",
+  "stack": "heroku-20"
 }
