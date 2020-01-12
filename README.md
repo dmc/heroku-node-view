@@ -25,7 +25,10 @@ you can also inspect database like
 
 ## mysql-heroku
 world.sql had imported.
-world database has 3 tables as city,country and countrylanguage
+world database has 3 tables below 
+* city
+* country
+* countrylanguage
 so try sql like...
 
 ## mysql-information_schema

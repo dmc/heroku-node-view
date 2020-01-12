@@ -1,7 +1,3 @@
-/*
- * GET users listing.
- */
-
 exports.execute = function(req, res) {
 
 	var debug = require('./debug');
