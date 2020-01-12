@@ -6,11 +6,6 @@ nodejs app migrate form db-view
 https://node-view.herokuapp.com/
 
 # databases
-
-## postgresql-heroku
-world.sql had imported.
-world database has 3 tables as city,country and countrylanguage
-
 so try sql like...
 
 * select * from city
