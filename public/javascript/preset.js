@@ -22,3 +22,15 @@ const csspresets =
     "atari.css",
     "creep.css"];
 
+function loadPreset() {
+    for (var i = 0; i < presets.length; i++) {
+        $("#preset").append($('<option>').html(presets[i][0]).val(i));
+    }
+
+    for (var i = 0; i < csspresets.length; i++) {
+        var $option = $('<option>').html(csspresets[i]).val(csspresets[i])
+                .attr('id', csspresets[i]);
+        $("#css-list").append(
+                $('<option>').html(csspresets[i]).val(csspresets[i]));
+    }
+}

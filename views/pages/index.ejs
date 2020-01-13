@@ -18,28 +18,20 @@ src="/javascript/preset.js"></script>
 <script language="JavaScript" type="text/javascript">
 	jQuery(function($) {
 
+		loadPreset();
+
 		setAppearance("login");
 
-		for (var i = 0; i < presets.length; i++) {
-			$("#preset").append($('<option>').html(presets[i][0]).val(i));
-		}
-
-		for (var i = 0; i < csspresets.length; i++) {
-			var $option = $('<option>').html(csspresets[i]).val(csspresets[i])
-					.attr('id', csspresets[i]);
-			$("#css-list").append(
-					$('<option>').html(csspresets[i]).val(csspresets[i]));
-		}
-
 		$('#preset').on("change", function() {
-			var value = $(this).val();
-			$("#vendor").val(presets[value][1]);
-			$("#host").val(presets[value][2]);
-			$("#port").val(presets[value][3]);
-			$("#database").val(presets[value][4]);
-			$("#user").val(presets[value][5]);
-			$("#password").val(presets[value][6]);
-		});
+        var value = $(this).val();
+        $("#vendor").val(presets[value][1]);
+        $("#host").val(presets[value][2]);
+        $("#port").val(presets[value][3]);
+        $("#database").val(presets[value][4]);
+        $("#user").val(presets[value][5]);
+        $("#password").val(presets[value][6]);
+    });
+
 
 		$('#login').click(
 				function() {
