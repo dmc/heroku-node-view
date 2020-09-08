@@ -22,12 +22,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dmc/heroku-node-view"
+    "url": "git+https://github.com/dmc/heroku-node-view.git"
   },
   "keywords": [
     "node",
     "heroku",
     "express"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dmc/heroku-node-view/issues"
+  },
+  "homepage": "https://github.com/dmc/heroku-node-view#readme",
+  "author": "dmc"
 }
