@@ -1,5 +1,5 @@
 {
-  "name": "heroku node view",
+  "name": "heroku-node-view",
   "version": "0.3.0",
   "description": "database viewer using Node.js app running on heroku",
   "engines": {
