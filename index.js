@@ -14,9 +14,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 app.get('/', (req, res) => res.render('pages/index'))
-app.post('/query', function(req, res){
+app.post('/query', function (req, res) {
 
-  if(req.body.vendor === "mysql"){
+  if (req.body.vendor === "mysql") {
 
     mysql_query.execute(req, res);
 
@@ -32,4 +32,4 @@ app.post('/query', function(req, res){
   }
 
 })
-app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
+app.listen(PORT, () => console.log(`Listening on ${PORT}`))
