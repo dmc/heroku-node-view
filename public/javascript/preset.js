@@ -15,12 +15,8 @@ const presets = [
 
 const csspresets =
     ["default.css",
-    "black.css",
-    "orange.css",
-    "dark.css",
-    "bttf.css",
-    "atari.css",
-    "creep.css"];
+     "dark.css",
+     "dark.css"];
 
 function loadPreset() {
     for (var i = 0; i < presets.length; i++) {
