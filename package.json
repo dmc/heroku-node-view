@@ -12,7 +12,6 @@
   "dependencies": {
     "ejs": "^2.5.6",
     "express": "^4.17.1",
-    "forever": "*",
     "mysql": "^2.17.1",
     "pg": "^6.4.2"
   },
