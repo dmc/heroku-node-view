@@ -3,13 +3,13 @@
    src: url('font/Monoton-Regular.ttf') format("truetype");
 }
 
-body{
+body {
    font-family: Monoton;
    color:#448DF7;
    background-color: black;
 }
 
-div#result > table > tbody > tr > th {
+th {
    background-color: #448DF7;
    font-size:100%;
    font:inherit;

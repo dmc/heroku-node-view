@@ -9,13 +9,13 @@ body{
     color:navy;
 }
 
-div#result > table > tbody > tr > th {
+th {
 	background-color: navy;
 	font-size:100%;
 	font:inherit;
 	color: white;
-}
-
+ }
+ 
 label#error{
 	font-size:100%;
 	font:inherit;

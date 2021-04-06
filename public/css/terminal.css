@@ -15,7 +15,7 @@ table{
     font-size: 12px;
 }
 
-div#result > table > tbody > tr > th {
+th {
     font:inherit;
     font-size: 12px;
     background-color: limegreen;
