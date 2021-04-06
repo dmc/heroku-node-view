@@ -16,10 +16,10 @@ div#result > table > tbody > tr > th {
    color: black;
 }
 
-div#error{
-   font-size:100%;
-   font:inherit;
-   color: red;
+label#error{
+	font-size:100%;
+	font:inherit;
+	color: red;
 }
 
  
