@@ -25,7 +25,6 @@ app.post('/query', function (req, res) {
     postgresql_query.execute(req, res);
 
   } else {
-
     res.statusCode = 503;
     res.statusMessage = "unsupport database";
     res.end();
