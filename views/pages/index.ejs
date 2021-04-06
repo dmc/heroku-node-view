@@ -88,10 +88,10 @@
 
                                     try {
                                         var obj = $.parseJSON(data);
-                                        showMessage($("#result-set"), obj.affected +
+                                        showMessage($("#result-info"), obj.affected +
                                             " data has updated.");
                                     } catch (e) {
-                                        showResultSet($("#result-set"), data);
+                                        showResultSet($("#result-error"), data);
                                     }
                                 })
                             .fail(
@@ -281,6 +281,16 @@
 
         <div id="result">
             <table id='result-set' border='1' cellpadding='1' cellspacing='0'>
+            </table>
+        </div>
+
+        <div id="info">
+            <table id='result-info' border='1' cellpadding='1' cellspacing='0'>
+            </table>
+        </div>
+
+        <div id="error">
+            <table id='result-error' border='1' cellpadding='1' cellspacing='0'>
             </table>
         </div>
 

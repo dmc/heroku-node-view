@@ -15,8 +15,8 @@ const presets = [
 
 const csspresets =
     ["default.css",
-    "light.css",
     "dark.css",
+    "light.css",
     "terminal.css"];
 
 function loadPreset() {
