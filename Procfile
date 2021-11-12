@@ -1,1 +1,1 @@
-web: npm install forever -g && forever start index.js
+web: node index.js
