@@ -16,3 +16,9 @@ th {
 	font:inherit;
 	color: red;
 }
+
+.ui-widget-content{
+    opacity:.8;
+	font-family: inherit;
+    font-weight:inherit;
+}

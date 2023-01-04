@@ -5,9 +5,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="icon" type="image/svg" href="./node.svg" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <link
       rel="stylesheet"
-      href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css"
+      href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/ui-lightness/jquery-ui.css"
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
@@ -59,9 +60,10 @@
               user: $("#user").val(),
               password: $("#password").val(),
             },
-            success: function (data) {
+          })
+            .done(function (data) {
               setAppearance("sql");
-              showMessage(
+              textMessage(
                 $("#login-message"),
                 "login-database is " +
                   $("#vendor").val() +
@@ -70,13 +72,13 @@
                   "/" +
                   $("#database").val()
               );
-            },
-            error: function (xhr, status, error) {
-              showMessage($("#login-message"), error, "error");
-            },
-          }).always(function () {
-            $(':input[type="button"]').prop("disabled", false);
-          });
+            })
+            .fail(function (xhr, status, error) {
+              textMessage($("#login-message"), error, "error");
+            })
+            .always(function () {
+              $(':input[type="button"]').prop("disabled", false);
+            });
         });
 
         $("#execute").click(function () {
@@ -97,31 +99,135 @@
               password: $("#password").val(),
               query: $("#sql").val(),
             },
-            success: function (data) {
+          })
+            .done(function (data) {
+              var record = true;
+
               if ($.isArray(data)) {
-                showResultSet($("#result"), data);
+                if (data.length < 0) {
+                  record = false;
+                }
+                jsonToTable($("#result"), data);
               } else {
-                showMessage(
+                textMessage(
                   $("#result"),
                   `query affected ${data.affectedRows} rows.`
                 );
               }
-            },
-            error: function (xhr, status, error) {
-              showMessage($("#result"), error, "error");
-            },
-          }).always(function () {
-            $(':input[type="button"]').prop("disabled", false);
-          });
+
+              if (record) {
+                recordHistory($("#sql").val());
+              }
+            })
+            .fail(function (xhr, status, error) {
+              textMessage($("#result"), error, "error");
+            })
+            .always(function () {
+              $(':input[type="button"]').prop("disabled", false);
+            });
         });
 
         $("#exit").click(function () {
           setAppearance("login");
         });
+
+        $("#history").click(function () {
+          var cookie = $.cookie("history");
+          var array = getHistoryAsArray();
+
+          var $table = $("<table>");
+          var $tbody = $("<tbody>");
+          var $span;
+          var decoded;
+          array.forEach(function (value) {
+            decoded = decodeURIComponent(value);
+            $span = $("<span>");
+            $span.attr(
+              "style",
+              "border-bottom: solid 1px;cursor: hand; cursor:pointer;"
+            );
+            $span.attr("onclick", `copyHistory('${decoded}')`);
+            $span.text(decoded);
+            $("<tr>").append($("<td>")).append($span).appendTo($tbody);
+          });
+
+          $table.append($tbody);
+
+          $("#dialog").html("");
+          $("#dialog").html($table);
+          if ($("#dialog").dialog("instance")) {
+            $("#dialog").dialog();
+          } else {
+            $("#dialog").dialog({
+              draggable: true,
+              width: "60%",
+              height: "auto",
+              closeOnEscape: true,
+              closeText: "close",
+              buttons: [
+                {
+                  text: "close",
+                  id: "close",
+                  click: function () {
+                    $(this).dialog("close");
+                  },
+                },
+                {
+                  text: "clear history",
+                  id: "clear",
+                  click: function () {
+                    $.removeCookie("history");
+                    $(this).dialog("close");
+                  },
+                },
+              ],
+            });
+          }
+        });
       });
 
-      function showResultSet(target, data) {
+      function copyHistory(value) {
+        $("#sql").val(value);
+        $("#dialog").dialog("close");
+        $("#execute").focus();
+      }
+
+      function recordHistory(query) {
+        var escaped = encodeURI(query);
+        var array = getHistoryAsArray();
+
+        if (array.length > 20) {
+          array.pop();
+        }
+        var index = $.inArray(escaped, array);
+        if (index > -1) {
+          array.splice(index, 1);
+        }
+        array.unshift(escaped);
+        $.cookie("history", JSON.stringify(array), {
+          expires: 1,
+          secure: true,
+        });
+      }
+
+      function getHistoryAsArray() {
+        var cookie = $.cookie("history");
+        var array;
+        try {
+          array = JSON.parse(cookie);
+        } catch (ignore) {
+          array = [];
+        }
+        return array;
+      }
+
+      function jsonToTable(target, data) {
         target.html("");
+
+        if (data.length < 1) {
+          return;
+        }
+
         var $table = $("<table>");
         var $head = null;
         var $thead = $("<thead>");
@@ -157,7 +263,7 @@
         target.append($table);
       }
 
-      function showMessage(target, message, className = "") {
+      function textMessage(target, message, className = "") {
         target.html("");
         $body = $("<p>").text(message).addClass(className);
         target.append($body);
@@ -305,6 +411,7 @@
       <table>
         <tr>
           <td><input type="button" value="execute" id="execute" /></td>
+          <td><input type="button" value="history" id="history" /></td>
           <td><input type="button" value="exit" id="exit" /></td>
         </tr>
       </table>
@@ -312,6 +419,6 @@
     </div>
 
     <div id="result"></div>
-    <div id="dialog" title="history"></div>
+    <div id="dialog" class="dialog" title="history"></div>
   </body>
 </html>
