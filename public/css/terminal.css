@@ -1,10 +1,10 @@
 @font-face {
-    font-family: 'Press Start 2P';
-    src: url('./font/PressStart2P-Regular.ttf') format("truetype");
+    font-family: 'Monocraft';
+    src: url('./font/Monocraft.ttf') format("truetype");
 }
 
 body{
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Monocraft', cursive;
     font-size: 12px;
     color: limegreen;
     background-color: black;
@@ -22,7 +22,7 @@ th {
     color: black;
 }
 
-label#error{
+.error{
     font:inherit;
     font-size: 12px;
 	color: red;
