@@ -74,7 +74,10 @@
               );
             })
             .fail(function (xhr, status, error) {
-              textMessage($("#login-message"), error, "error");
+              var message = $.isEmptyObject(error)
+                ? `error!! http-status: ${xhr.status}`
+                : error;
+              textMessage($("#login-message"), message, "error");
             })
             .always(function () {
               $(':input[type="button"]').prop("disabled", false);
@@ -120,7 +123,10 @@
               }
             })
             .fail(function (xhr, status, error) {
-              textMessage($("#result"), error, "error");
+              var message = $.isEmptyObject(error)
+                ? `error!! http-status: ${xhr.status}`
+                : error;
+              textMessage($("#result"), message, "error");
             })
             .always(function () {
               $(':input[type="button"]').prop("disabled", false);
@@ -425,7 +431,7 @@
       <hr />
     </div>
 
-    <div id="result" style="display: block"></div>
+    <div id="result"></div>
     <div id="dialog" title="history"></div>
   </body>
 </html>
