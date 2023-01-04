@@ -1,30 +1,31 @@
-exports.execute = function(req, res) {
+exports.execute = function (req, res) {
+  const { Client } = require("pg");
 
-    const { Client } = require('pg');
-    const conString = "postgres://"+ req.body.user+":"+ req.body.password + "@" + req.body.host + ":" + req.body.port +"/" + req.body.database;
-    const client = new Client({
-      connectionString: conString,
-      ssl: {
-        rejectUnauthorized: false
-      }
-    });
-    
-    client.connect();
-    
-    const sql = req.body.event === "login" ? "SELECT 1" : req.body.query;
+  const client = new Client({
+    host: req.body.host,
+    port: req.body.port,
+    user: req.body.user,
+    password: req.body.password,
+    database: req.body.database,
+  });
 
-    client.query(sql, (err, results) => {
-      if (err) {
-        res.statusCode = 503;
-        res.statusMessage = err.message;
-        res.end();
-      }
-      if(results.command === "SELECT"){
-        res.json(results.rows);            
-        } else {
-            res.json(`{"affected":"${results.rowCount}"}`);
-        }
+  client.connect();
+
+  const sql = req.body.event === "login" ? "SELECT 1" : req.body.query;
+
+  client.query(sql, (err, results) => {
+    if (err) {
+      res.statusCode = 503;
+      res.statusMessage = err.message;
+      res.end();
       client.end();
-    });
-
-}
+      return;
+    }
+    if (results.command === "SELECT") {
+      res.json(results.rows);
+    } else {
+      res.json(`{"affectedRows":"${results.rowCount}"}`);
+    }
+    client.end();
+  });
+};

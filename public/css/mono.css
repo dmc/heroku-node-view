@@ -1,16 +1,16 @@
 body{
-	font-family: 'Montserrat', sans-serif;
+    font-family: 'Monoton', cursive;
     font-weight:700;
     color:navy;
 }
 
 th {
-	background-color: navy;
-	font-size:100%;
-	font:inherit;
-	color: white;
- }
- 
+    background-color: navy;
+    font-size:100%;
+    font:inherit;
+    color: white;
+}
+
 .error{
 	font-size:100%;
 	font:inherit;

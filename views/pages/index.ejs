@@ -1,301 +1,437 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+  <head>
+    <title>node-view</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="icon" type="image/svg" href="./node.svg" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/ui-lightness/jquery-ui.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
-    <head>
-        <title>node-view</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript" language="javascript" src="/javascript/jquery.js"></script>
-        <script type="text/javascript" language="javascript" src="/javascript/jquery-ui.js"></script>
-        <script type="text/javascript" language="javascript" src="/javascript/preset.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Monoton&family=Montserrat:wght@700&display=swap"
+      rel="stylesheet"
+    />
 
-        <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-        <link id="theme" rel="stylesheet" href="/css/default.css">
+    <script
+      type="text/javascript"
+      language="javascript"
+      src="/javascript/preset.js"
+    ></script>
 
-        <script language="JavaScript" type="text/javascript">
-            jQuery(function ($) {
+    <link id="theme" rel="stylesheet" href="/css/default.css" />
 
-                loadPreset();
+    <script language="JavaScript" type="text/javascript">
+      jQuery(function ($) {
+        loadPreset();
 
-                setAppearance("login");
+        setAppearance("login");
 
-                $('#preset').on("change", function () {
-                    var value = $(this).val();
-                    $("#vendor").val(presets[value][1]);
-                    $("#host").val(presets[value][2]);
-                    $("#port").val(presets[value][3]);
-                    $("#database").val(presets[value][4]);
-                    $("#user").val(presets[value][5]);
-                    $("#password").val(presets[value][6]);
-                });
+        $("#preset").on("change", function () {
+          var value = $(this).val();
+          $("#vendor").val(presets[value][1]);
+          $("#host").val(presets[value][2]);
+          $("#port").val(presets[value][3]);
+          $("#database").val(presets[value][4]);
+          $("#user").val(presets[value][5]);
+          $("#password").val(presets[value][6]);
+        });
 
+        $("#login").click(function () {
+          $(':input[type="button"]').prop("disabled", true);
 
-                $('#login').click(
-                    function () {
-
-                        $("input[type='button']").prop("disabled", true);
-
-                        $.ajax({
-                            url: "/query",
-                            type: "post",
-                            dataType: "json",
-                            data: {
-                                event: 'login',
-                                vendor: $('#vendor').val(),
-                                host: $('#host').val(),
-                                port: $('#port').val(),
-                                database: $('#database').val(),
-                                user: $('#user').val(),
-                                password: $('#password').val()
-                            }
-                        }).done(
-                            function (data) {
-                                setAppearance("sql");
-                                showMessage($("#login-message-table"),
-                                    "login-database is " +
-                                    $('#vendor').val() + "://" +
-                                    $('#host').val() + "/" +
-                                    $('#database').val());
-                            }).fail(
-                            function (XMLHttpRequest, textStatus, errorThrown) {
-                                showErrorMessage($("#login-message-table"),
-                                    errorThrown);
-                            }).always(function () {
-                            $("input[type='button']").prop("disabled", false);
-                        });
-                    });
-
-                $('#execute').click(
-                    function () {
-
-                        $("input[type='button']").prop("disabled", true);
-
-                        $.ajax({
-                                url: "/query",
-                                type: "post",
-                                dataType: "json",
-                                data: {
-                                    event: 'execute',
-                                    vendor: $('#vendor').val(),
-                                    host: $('#host').val(),
-                                    port: $('#port').val(),
-                                    database: $('#database').val(),
-                                    user: $('#user').val(),
-                                    password: $('#password').val(),
-                                    query: $('#sql').val()
-                                }
-                            }).done(
-                                function (data) {
-
-                                    try {
-                                        var obj = $.parseJSON(data);
-                                        showMessage($("#result-info"), obj.affected +
-                                            " data has updated.");
-                                    } catch (e) {
-                                        showResultSet($("#result-error"), data);
-                                    }
-                                })
-                            .fail(
-                                function (XMLHttpRequest, textStatus,
-                                    errorThrown) {
-                                    showErrorMessage($('#result-set'),
-                                        errorThrown);
-                                }).always(
-                                function () {
-                                    $("input[type='button']").prop(
-                                        "disabled", false);
-                                });
-                    });
-
-                $('#exit').click(function () {
-                    setAppearance("login");
-                });
-
+          $.ajax({
+            url: "/query",
+            type: "post",
+            timeout: 10000,
+            dataType: "json",
+            data: {
+              event: "login",
+              vendor: $("#vendor").val(),
+              host: $("#host").val(),
+              port: $("#port").val(),
+              database: $("#database").val(),
+              user: $("#user").val(),
+              password: $("#password").val(),
+            },
+          })
+            .done(function (data) {
+              setAppearance("sql");
+              textMessage(
+                $("#login-message"),
+                "login-database is " +
+                  $("#vendor").val() +
+                  "://" +
+                  $("#host").val() +
+                  "/" +
+                  $("#database").val()
+              );
+            })
+            .fail(function (xhr, status, error) {
+              var message = $.isEmptyObject(error)
+                ? `error!! http-status: ${xhr.status}`
+                : error;
+              textMessage($("#login-message"), message, "error");
+            })
+            .always(function () {
+              $(':input[type="button"]').prop("disabled", false);
             });
+        });
 
-            function showResultSet(target, data) {
+        $("#execute").click(function () {
+          $(':input[type="button"]').prop("disabled", true);
 
-                target.html("");
-                var $head = null,
-                    $body = $('<tbody>');
+          $.ajax({
+            url: "/query",
+            type: "post",
+            timeout: 10000,
+            dataType: "json",
+            data: {
+              event: "execute",
+              vendor: $("#vendor").val(),
+              host: $("#host").val(),
+              port: $("#port").val(),
+              database: $("#database").val(),
+              user: $("#user").val(),
+              password: $("#password").val(),
+              query: $("#sql").val(),
+            },
+          })
+            .done(function (data) {
+              var record = true;
 
-                $.each(data, function (index, obj) {
-                    if ($head === null) {
-                        $head = $('<tr>').append($.map(obj, function (value, name) {
-                            return $('<th>', {
-                                text: name
-                            });
-                        }));
-                    }
-
-                    $('<tr>').append($.map(obj, function (value, name) {
-                        return $('<td>', {
-                            text: value
-                        });
-                    })).appendTo($body);
-                });
-                target.attr("border", "1");
-                target.append($head).append($body);
-
-            }
-
-            function showMessage(target, message) {
-                target.html("");
-                $body = $('<tbody>').append($('<tr>'));
-                $body.append($('<td>', {
-                    text: message
-                }));
-                target.attr("border", "0");
-                target.append($body);
-            }
-
-            function showErrorMessage(target, errorThrown) {
-                target.html("");
-                $body = $('<tbody>').append($('<tr>'));
-                $body.append($('<td>', {
-                    id: 'error',
-                    text: errorThrown
-                }));
-                target.attr("border", "0");
-                target.append($body);
-            }
-
-            function setAppearance(mode) {
-
-                if (mode === "login") {
-                    $("#login-parameter").show();
-                    $("#login-message-table").html("");
-                    $("#query-buttons").hide();
-                    $("#sql").val("");
-                    $("#query-box").hide();
-                    $("#result").hide();
-                    $("#result-set").empty();
-                    if ($('#dialog').dialog("instance")) {
-                        $("#dialog").html("");
-                        $('#dialog').dialog("destroy");
-                    }
-                } else if (mode == "sql") {
-                    $("#login-parameter").hide();
-                    $("#query-buttons").show();
-                    $("#sql").val("");
-                    $("#query-box").show();
-                    $("#result").show();
-                    $("#result-set").empty();
-                    if ($('#dialog').dialog("instance")) {
-                        $("#dialog").html("");
-                        $('#dialog').dialog("destroy");
-                    }
+              if ($.isArray(data)) {
+                if (data.length < 0) {
+                  record = false;
                 }
+                jsonToTable($("#result"), data);
+              } else {
+                textMessage(
+                  $("#result"),
+                  `query affected ${data.affectedRows} rows.`
+                );
+              }
 
-            }
+              if (record) {
+                recordHistory($("#sql").val());
+              }
+            })
+            .fail(function (xhr, status, error) {
+              var message = $.isEmptyObject(error)
+                ? `error!! http-status: ${xhr.status}`
+                : error;
+              textMessage($("#result"), message, "error");
+            })
+            .always(function () {
+              $(':input[type="button"]').prop("disabled", false);
+            });
+        });
 
-            function changeTheme() {
-                $('#theme').attr("href", "/css/" + $("#css-list").val());
-            };
-        </script>
-    </head>
+        $("#exit").click(function () {
+          setAppearance("login");
+        });
 
-    <body>
-        <div id="css-selector">
-            <table>
-                <tr>
-                    <td>theme</td>
-                    <td><select id="css-list" onchange="changeTheme()">
-                        </select></td>
-                </tr>
-            </table>
-            <hr />
-        </div>
-        <div id="header">
-            <table cellpadding="" class="header">
-                <tr>
-                    <td align="left">
-                        <h1>db-view with node.js</h1>
-                    </td>
-                </tr>
-                <tr>
-                    <td align="right">buid on 16th Dec 2016. <br>developed by
-                        dmc system service.
-                    </td>
-                </tr>
-            </table>
-            <hr />
-        </div>
-        <div id="login-parameter">
-            <table>
-                <tr>
-                    <td>database</td>
-                    <td><select id="preset"></select></td>
-                </tr>
-            </table>
-            <table>
-                <tr>
-                    <td>vender</td>
-                    <td><input id="vendor" name="vendor" type="text" size="40pix" value="" /></td>
-                </tr>
-                <tr>
-                    <td>host</td>
-                    <td><input id="host" name="host" type="text" size="40pix" value="" /></td>
-                </tr>
-                <tr>
-                    <td>port</td>
-                    <td><input id="port" name="port" type="text" size="40pix" value="" /></td>
-                </tr>
-                <tr>
-                    <td>database</td>
-                    <td><input id="database" name="database" type="text" size="40pix" value="" /></td>
-                </tr>
-                <tr>
-                    <td>user</td>
-                    <td><input id="user" name="user" type="text" size="40pix" value="" /></td>
-                </tr>
-                <tr>
-                    <td>password</td>
-                    <td><input id="password" name="password" type="text" size="40pix" value="" /></td>
-                </tr>
-            </table>
-            <input class="button" type="button" value="login" id="login" />
-            <hr />
-        </div>
+        $("#history").click(function () {
+          var cookie = $.cookie("history");
+          var array = getHistoryAsArray();
 
-        <div id="login-message">
-            <table id='login-message-table'>
-            </table>
-        </div>
+          var $table = $("<table>");
+          var $tbody = $("<tbody>");
+          var $span;
+          var decoded;
+          var index = 0;
+          array.forEach(function (value) {
+            decoded = decodeURIComponent(value);
+            $span = $("<span>");
+            $span.attr(
+              "style",
+              "border-bottom: solid 1px;cursor: hand; cursor:pointer;"
+            );
+            $span.attr("onclick", `copyHistory(${index})`);
+            $span.text(decoded);
+            $("<tr>").append($("<td>")).append($span).appendTo($tbody);
+            index++;
+          });
 
-        <div id="query-box">
-            <table>
-                <tr>
-                    <td><textarea rows="6" cols="60" name="sql" id="sql" value="">
-            </textarea></td>
-                </tr>
-            </table>
-        </div>
+          $table.append($tbody);
 
-        <div id="query-buttons">
-            <table>
-                <tr>
-                    <td><input type="button" value="execute" id="execute" /></td>
-                    <td><input type="button" value="exit" id="exit" /></td>
-                </tr>
-            </table>
-            <hr />
-        </div>
+          $("#dialog").html("");
+          $("#dialog").html($table);
+          if ($("#dialog").dialog("instance")) {
+            $("#dialog").dialog();
+          } else {
+            $("#dialog").dialog({
+              draggable: true,
+              width: "60%",
+              height: "auto",
+              closeOnEscape: true,
+              closeText: "close",
+              buttons: [
+                {
+                  text: "close",
+                  id: "close",
+                  click: function () {
+                    $(this).dialog("close");
+                  },
+                },
+                {
+                  text: "clear history",
+                  id: "clear",
+                  click: function () {
+                    $.removeCookie("history");
+                    $(this).dialog("close");
+                  },
+                },
+              ],
+            });
+          }
+        });
+      });
 
-        <div id="result">
-            <table id='result-set' border='1' cellpadding='1' cellspacing='0'>
-            </table>
-        </div>
+      function copyHistory(index) {
+        var value = "";
+        try {
+          value = getHistoryAsArray()[index];
+        } catch (ignore) {}
 
-        <div id="info">
-            <table id='result-info' border='1' cellpadding='1' cellspacing='0'>
-            </table>
-        </div>
+        $("#sql").val(decodeURI(value));
+        $("#dialog").dialog("close");
+        $("#execute").focus();
+      }
 
-        <div id="error">
-            <table id='result-error' border='1' cellpadding='1' cellspacing='0'>
-            </table>
-        </div>
+      function recordHistory(query) {
+        var escaped = encodeURI(query);
+        var array = getHistoryAsArray();
 
-        <div id="dialog" title="history"></div>
-    </body>
+        if (array.length > 20) {
+          array.pop();
+        }
+        var index = $.inArray(escaped, array);
+        if (index > -1) {
+          array.splice(index, 1);
+        }
+        array.unshift(escaped);
+        $.cookie("history", JSON.stringify(array), {
+          expires: 1,
+          secure: true,
+        });
+      }
+
+      function getHistoryAsArray() {
+        var cookie = $.cookie("history");
+        var array;
+        try {
+          array = JSON.parse(cookie);
+        } catch (ignore) {
+          array = [];
+        }
+        return array;
+      }
+
+      function jsonToTable(target, data) {
+        target.html("");
+
+        if (data.length < 1) {
+          return;
+        }
+
+        var $table = $("<table>");
+        var $head = null;
+        var $thead = $("<thead>");
+        var $tbody = $("<tbody>");
+
+        $.each(data, function (index, obj) {
+          if ($head === null) {
+            $head = $("<tr>").append(
+              $.map(obj, function (value, name) {
+                return $("<th>", {
+                  text: name,
+                });
+              })
+            );
+            $thead.append($head);
+          }
+
+          $("<tr>")
+            .append(
+              $.map(obj, function (value, name) {
+                return $("<td>", {
+                  text: value,
+                });
+              })
+            )
+            .appendTo($tbody);
+        });
+        $table.attr("border", "1");
+        $table.attr("cellpadding", "1");
+        $table.attr("cellspacing", "0");
+        $thead.appendTo($table);
+        $tbody.appendTo($table);
+        target.append($table);
+      }
+
+      function textMessage(target, message, className = "") {
+        target.html("");
+        $body = $("<p>").text(message).addClass(className);
+        target.append($body);
+      }
+
+      function setAppearance(mode) {
+        if (mode === "login") {
+          $("#login-parameter").show();
+          $("#login-message").html("");
+          $("#query-buttons").hide();
+          $("#sql").val("");
+          $("#query-box").hide();
+          $("#result").hide();
+          $("#result").empty();
+          if ($("#dialog").dialog("instance")) {
+            $("#dialog").html("");
+            $("#dialog").dialog("destroy");
+          }
+        } else if (mode == "sql") {
+          $("#login-parameter").hide();
+          $("#query-buttons").show();
+          $("#sql").val("");
+          $("#query-box").show();
+          $("#result").show();
+          $("#result").empty();
+          if ($("#dialog").dialog("instance")) {
+            $("#dialog").html("");
+            $("#dialog").dialog("destroy");
+          }
+        }
+      }
+
+      function changeTheme() {
+        $("#theme").attr("href", "/css/" + $("#css-list").val());
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="css-selector">
+      <table>
+        <tr>
+          <td>theme</td>
+          <td><select id="css-list" onchange="changeTheme()"></select></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div id="header">
+      <table cellpadding="" class="header">
+        <tr>
+          <td align="left">
+            <h1>db-view with node.js</h1>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            buid on 2nd Jan 2023. <br />developed by dmc system service.
+          </td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div id="login-parameter">
+      <table>
+        <tr>
+          <td>database</td>
+          <td><select id="preset"></select></td>
+        </tr>
+      </table>
+      <table>
+        <tr>
+          <td>vender</td>
+          <td>
+            <input
+              id="vendor"
+              name="vendor"
+              type="text"
+              size="40pix"
+              value=""
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>host</td>
+          <td>
+            <input id="host" name="host" type="text" size="40pix" value="" />
+          </td>
+        </tr>
+        <tr>
+          <td>port</td>
+          <td>
+            <input id="port" name="port" type="text" size="40pix" value="" />
+          </td>
+        </tr>
+        <tr>
+          <td>database</td>
+          <td>
+            <input
+              id="database"
+              name="database"
+              type="text"
+              size="40pix"
+              value=""
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            <input id="user" name="user" type="text" size="40pix" value="" />
+          </td>
+        </tr>
+        <tr>
+          <td>password</td>
+          <td>
+            <input
+              id="password"
+              name="password"
+              type="text"
+              size="40pix"
+              value=""
+            />
+          </td>
+        </tr>
+      </table>
+      <input class="button" type="button" value="login" id="login" />
+      <hr />
+    </div>
+
+    <div id="login-message"></div>
+
+    <div id="query-box">
+      <table>
+        <tr>
+          <td>
+            <textarea rows="6" cols="60" name="sql" id="sql" value="">
+            </textarea>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="query-buttons">
+      <table>
+        <tr>
+          <td><input type="button" value="execute" id="execute" /></td>
+          <td><input type="button" value="history" id="history" /></td>
+          <td><input type="button" value="exit" id="exit" /></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+
+    <div id="result"></div>
+    <div id="dialog" title="history"></div>
+  </body>
 </html>

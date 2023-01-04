@@ -1,8 +1,8 @@
 {
-  "name": "Database viewer",
-  "description": "Database viewer app using Node.js with Express 4",
+  "name": "Database Viewer",
+  "description": "Database Viewer using Node.js with Express 4",
   "repository": "https://github.com/dmc/heroku-node-view",
   "logo": "https://github.com/dmc/heroku-node-view/blob/master/public/node.svg",
-  "keywords": ["node", "express", "heroku"],
+  "keywords": ["node", "express", "heroku","vercel"],
   "image": "heroku/nodejs"
 }
