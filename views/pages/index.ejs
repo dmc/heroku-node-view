@@ -139,6 +139,7 @@
           var $tbody = $("<tbody>");
           var $span;
           var decoded;
+          var index = 0;
           array.forEach(function (value) {
             decoded = decodeURIComponent(value);
             $span = $("<span>");
@@ -146,9 +147,10 @@
               "style",
               "border-bottom: solid 1px;cursor: hand; cursor:pointer;"
             );
-            $span.attr("onclick", `copyHistory('${decoded}')`);
+            $span.attr("onclick", `copyHistory(${index})`);
             $span.text(decoded);
             $("<tr>").append($("<td>")).append($span).appendTo($tbody);
+            index++;
           });
 
           $table.append($tbody);
@@ -186,8 +188,13 @@
         });
       });
 
-      function copyHistory(value) {
-        $("#sql").val(value);
+      function copyHistory(index) {
+        var value = "";
+        try {
+          value = getHistoryAsArray()[index];
+        } catch (ignore) {}
+
+        $("#sql").val(decodeURI(value));
         $("#dialog").dialog("close");
         $("#execute").focus();
       }
@@ -418,7 +425,7 @@
       <hr />
     </div>
 
-    <div id="result"></div>
-    <div id="dialog" class="dialog" title="history"></div>
+    <div id="result" style="display: block"></div>
+    <div id="dialog" title="history"></div>
   </body>
 </html>
