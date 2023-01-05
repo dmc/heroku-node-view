@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'Monocraft';
     src: url('./font/Monocraft.ttf') format("truetype");
-    font-weight:700;
+    font-weight: 700;
 }
 
-body{
+body {
     font-family: 'Monocraft', cursive;
     font-size: 100%;
     color: limegreen;
@@ -12,20 +12,18 @@ body{
 }
 
 th {
-    font-size:100%;
-    font:inherit;
+    font-size: 100%;
     background-color: limegreen;
     color: black;
 }
 
-.error{
-    font-size:100%;
-    font:inherit;
-	color: red;
+.error {
+    font-size: 100%;
+    color: red;
 }
 
-.ui-widget-content{
-    opacity:.8;
-	font-family: inherit;
-    font-weight:inherit;
+.ui-widget-content {
+    font-family: inherit;
+    font-weight: inherit;
+    opacity: 0.8;
 }

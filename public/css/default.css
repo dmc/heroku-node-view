@@ -1,24 +1,22 @@
-body{
-	font-family: 'Montserrat', sans-serif;
-    font-weight:700;
-    color:navy;
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: navy;
 }
 
 th {
-	background-color: navy;
-	font-size:100%;
-	font:inherit;
-	color: white;
- }
- 
-.error{
-	font-size:100%;
-	font:inherit;
-	color: red;
+    background-color: navy;
+    font-size: 100%;
+    color: white;
 }
 
-.ui-widget-content{
-    opacity:.8;
+.error {
+    font-size: 100%;
+    color: red;
+}
+
+.ui-widget-content {
 	font-family: inherit;
-    font-weight:inherit;
+    font-weight: inherit;
+    opacity: 0.8;    
 }
