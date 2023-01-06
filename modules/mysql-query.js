@@ -1,6 +1,6 @@
-exports.execute = function (req, res) {
-  const mysql = require("mysql");
+const mysql = require("mysql");
 
+const execute = (req, res) => {
   const sql = req.body.event === "login" ? "SELECT 1" : req.body.query;
   const connection = mysql.createConnection({
     host: req.body.host,
@@ -24,3 +24,5 @@ exports.execute = function (req, res) {
     connection.end();
   });
 };
+
+exports.execute = execute;

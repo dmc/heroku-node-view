@@ -69,6 +69,8 @@
                   $("#vendor").val() +
                   "://" +
                   $("#host").val() +
+                  ":" +
+                  $("#port").val() +
                   "/" +
                   $("#database").val()
               );
@@ -114,7 +116,7 @@
               } else {
                 textMessage(
                   $("#result"),
-                  `query affected ${data.affectedRows} rows.`
+                  `query affected ${data.affectedRows} row(s).`
                 );
               }
 
